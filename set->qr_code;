@@ -1,0 +1,22 @@
+[90m= [39m[34;4mApp\Models\Asset[39;24m {#6178
+    [34mid[39m: [35m11[39m,
+    [34masset_code[39m: "[32m002/REKA/IT-H/IT/AT/2020[39m",
+    [34mname[39m: "[32mLogitech Connect Conference Cam[39m",
+    [34mcategory[39m: "[32mcamera[39m",
+    [34mbrand[39m: "[32mLogitech[39m",
+    [34mmodel[39m: "[32mConnect[39m",
+    [34mserial_number[39m: "[32m2030LZ51DHJ9[39m",
+    [34mdescription[39m: [36mnull[39m,
+    [34mcondition[39m: "[32mgood[39m",
+    [34mstatus[39m: "[32mavailable[39m",
+    [34masset_pic[39m: [36mnull[39m,
+    [34mlocation[39m: "[32mTI - Gedung Plant A Lt. 3[39m",
+    [34mpurchase_date[39m: [36mnull[39m,
+    [34mpurchase_price[39m: [36mnull[39m,
+    [34mqr_code[39m: "[32massets/qrcodes/11-002rekait-hitat2020.svg[39m",
+    [34mphoto[39m: "[32m0[39m",
+    [34mcreated_at[39m: "[32m2026-05-08 03:05:50[39m",
+    [34mupdated_at[39m: "[32m2026-06-09 02:58:07[39m",
+    [34mdeleted_at[39m: [36mnull[39m,
+  }
+
