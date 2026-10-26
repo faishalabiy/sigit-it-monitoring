@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -22,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'sso_id',
+        'employee_id',
     ];
 
     /**
@@ -39,6 +42,17 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    public function roles(): BelongsToMany { return $this->belongsToMany(Role::class); }
+    public function isLegacyAdmin(): bool {
+        $ids = array_filter(array_map('trim',explode(',',(string) config('iams.admin_user_ids',''))));
+        return in_array((string)$this->getKey(),$ids,true);
+    }
+    public function hasPermission(string $permission): bool {
+        if ($this->isLegacyAdmin()) return true;
+        return $this->roles()->get()->contains(fn ($r) => in_array($permission,$r->permissions ?? [],true));
+    }
+    public function borrowingsProcessed() { return $this->hasMany(Borrowing::class,'processed_by'); }
+
     protected function casts(): array
     {
         return [

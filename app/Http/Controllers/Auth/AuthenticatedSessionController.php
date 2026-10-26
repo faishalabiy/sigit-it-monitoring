@@ -36,12 +36,20 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $cameFromSso = (bool) $request->session()->get('sso_authenticated');
+
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        if ($cameFromSso && config('services.sso.logout_url') && config('services.sso.client_id')) {
+            $logoutUrl = (string) config('services.sso.logout_url');
+            $logoutUrl .= (str_contains($logoutUrl, '?') ? '&' : '?').http_build_query([
+                'client_id' => config('services.sso.client_id'),
+                'redirect_uri' => config('services.sso.after_logout_url', route('login')),
+            ], '', '&', PHP_QUERY_RFC3986);
+            return redirect()->away($logoutUrl);
+        }
+        return redirect()->route('login');
     }
 }

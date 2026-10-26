@@ -12,12 +12,14 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
+    <style>[x-cloak] { display: none !important; } summary::-webkit-details-marker { display:none; }</style>
 </head>
 
-<body class="min-h-screen bg-slate-100 text-slate-950 font-sans">
+<body class="min-h-screen bg-slate-100 text-slate-950 font-sans" x-data="{ mobileSidebarOpen:false }" @keydown.escape.window="mobileSidebarOpen=false">
     <div class="flex min-h-screen">
+        <div x-cloak x-show="mobileSidebarOpen" x-transition.opacity class="fixed inset-0 z-40 bg-slate-950/60 md:hidden" @click="mobileSidebarOpen=false"></div>
 
-        <aside class="fixed inset-y-0 left-0 z-50 hidden w-60 flex-col bg-slate-950 text-white md:flex">
+        <aside id="sigit-sidebar" class="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col bg-slate-950 text-white shadow-xl md:flex md:shadow-none" :class="{ '!flex': mobileSidebarOpen }" @click="if ($event.target.closest('a[href]')) mobileSidebarOpen=false">
             <a href="{{ route('admin.dashboard') }}"
                 class="flex items-center gap-3 border-b border-white/10 px-5 py-5 no-underline">
 
@@ -34,56 +36,7 @@
                 </span>
             </a>
 
-            <nav class="flex-1 overflow-y-auto px-3 py-4">
-                <p class="px-3 pb-2 pt-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Utama</p>
-
-                <a href="{{ route('admin.dashboard') }}"
-                    class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition
-               {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white' : 'text-white/65 hover:bg-white/10 hover:text-white' }}">
-                    <i class="fa-solid fa-chart-pie w-5 text-center"></i>
-                    <span>Dashboard</span>
-                </a>
-
-                <p class="px-3 pb-2 pt-5 text-[10px] font-bold uppercase tracking-widest text-white/30">Manajemen</p>
-
-                <a href="{{ route('admin.assets.index') }}"
-                    class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition
-               {{ request()->routeIs('admin.assets.*') ? 'bg-blue-600 text-white' : 'text-white/65 hover:bg-white/10 hover:text-white' }}">
-                    <i class="fa-solid fa-laptop w-5 text-center"></i>
-                    <span>Aset IT</span>
-                </a>
-
-                <a href="{{ route('admin.borrowings.index') }}"
-                    class="mt-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition
-               {{ request()->routeIs('admin.borrowings.*') ? 'bg-blue-600 text-white' : 'text-white/65 hover:bg-white/10 hover:text-white' }}">
-                    <i class="fa-solid fa-arrows-rotate w-5 text-center"></i>
-                    <span>Peminjaman</span>
-
-                    @php $overdue = \App\Models\Borrowing::where('status','overdue')->count(); @endphp
-                    @if ($overdue > 0)
-                        <span class="ml-auto rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-semibold text-red-300">
-                            {{ $overdue }}
-                        </span>
-                    @endif
-                </a>
-
-                <p class="px-3 pb-2 pt-5 text-[10px] font-bold uppercase tracking-widest text-white/30">Laporan</p>
-
-                <a href="{{ route('admin.reports.index') }}"
-                    class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition
-               {{ request()->routeIs('admin.reports.*') ? 'bg-blue-600 text-white' : 'text-white/65 hover:bg-white/10 hover:text-white' }}">
-                    <i class="fa-solid fa-file-lines w-5 text-center"></i>
-                    <span>Laporan</span>
-                </a>
-
-                <p class="px-3 pb-2 pt-5 text-[10px] font-bold uppercase tracking-widest text-white/30">Publik</p>
-
-                <a href="{{ route('public.landing') }}" target="_blank"
-                    class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/65 transition hover:bg-white/10 hover:text-white">
-                    <i class="fa-solid fa-arrow-up-right-from-square w-5 text-center"></i>
-                    <span>Halaman Publik</span>
-                </a>
-            </nav>
+            @include('layouts.sidebar-navigation')
 
             <div class="border-t border-white/10 p-3">
                 <form method="POST" action="{{ route('logout') }}">
@@ -97,12 +50,15 @@
             </div>
         </aside>
 
-        <main class="flex min-h-screen flex-1 flex-col md:ml-60">
+        <main class="flex min-h-screen min-w-0 flex-1 flex-col md:ml-64">
             <header
                 class="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-5 md:px-7">
+                <div class="flex min-w-0 items-center gap-3">
+                    <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 md:hidden" aria-controls="sigit-sidebar" :aria-expanded="mobileSidebarOpen.toString()" aria-label="Buka menu navigasi" @click="mobileSidebarOpen=!mobileSidebarOpen"><i class="fa-solid fa-bars"></i></button>
                 <h1 class="font-heading text-base font-bold">
                     @yield('page-title', 'Dashboard')
                 </h1>
+                </div>
 
                 <div class="flex items-center gap-3 text-sm text-slate-600">
                     <div
@@ -136,6 +92,20 @@
     </div>
 
     @stack('scripts')
+    <script>
+        document.querySelectorAll('[data-sidebar-module]').forEach((section) => {
+            const key = 'sigit.sidebar.' + section.dataset.sidebarModule;
+            const active = section.open;
+            try {
+                const stored = window.localStorage.getItem(key);
+                if (!active && stored !== null) section.open = stored === '1';
+            } catch (_) { /* storage optional */ }
+            section.addEventListener('toggle', () => {
+                try { window.localStorage.setItem(key, section.open ? '1' : '0'); }
+                catch (_) { /* storage optional */ }
+            });
+        });
+    </script>
 </body>
 
 </html>

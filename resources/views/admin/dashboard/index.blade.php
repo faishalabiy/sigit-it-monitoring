@@ -7,7 +7,7 @@
     <div>
         <h2 class="font-heading text-2xl font-bold tracking-tight text-slate-950">Dashboard</h2>
         <p class="mt-1 text-sm text-slate-500">
-            Ringkasan kondisi aset IT hari ini — {{ now()->format('d F Y') }}
+            Ringkasan aset IT, peminjaman, dan preventive maintenance — {{ now()->locale('id')->translatedFormat('d F Y') }}
         </p>
     </div>
 
@@ -86,6 +86,8 @@
         <div class="mt-3 font-heading text-3xl font-bold text-red-600">{{ $borrowingStats['overdue'] }}</div>
     </div>
 </div>
+
+@include('admin.dashboard.pm-summary-partial')
 
 <div class="grid gap-5 xl:grid-cols-2">
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">

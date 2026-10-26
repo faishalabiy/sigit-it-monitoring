@@ -1,0 +1,6 @@
+@extends('layouts.admin')
+@section('page-title','Role & Hak Akses')
+@section('content')
+<div class="mb-5 flex items-center justify-between"><h2 class="text-2xl font-bold">Role & Hak Akses</h2><a class="rounded-lg bg-blue-600 px-4 py-2 text-white" href="{{ route('admin.roles.create') }}">+ Tambah Role</a></div>
+<div class="overflow-x-auto rounded-xl bg-white"><table class="w-full text-left text-sm"><thead class="bg-slate-50"><tr><th class="p-4">Nama Role</th><th>Deskripsi</th><th>Pengguna</th><th>Tindakan</th></tr></thead><tbody>@foreach($roles as $role)<tr class="border-t"><td class="p-4">{{ $role->name }}</td><td>{{ $role->description }}</td><td>{{ $role->users_count }}</td><td><a class="mr-3 text-blue-600" href="{{ route('admin.roles.edit',$role) }}">Edit</a>@if($role->slug!=='super-admin'&&!$role->users_count)<form class="inline" method="POST" action="{{ route('admin.roles.destroy',$role) }}" onsubmit="return confirm('Hapus role?')">@csrf @method('DELETE')<button class="text-red-600">Hapus</button></form>@endif</td></tr>@endforeach</tbody></table></div>
+@endsection

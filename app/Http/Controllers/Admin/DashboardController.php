@@ -5,13 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Asset;
 use App\Models\Borrowing;
+use App\Services\PmMainDashboardService;
 use Illuminate\Support\Facades\DB;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(PmMainDashboardService $pmDashboard)
     {
+        // PM data and report links must never be disclosed to users without pm.view.
+        $pmSummary = auth()->user()->hasPermission('pm.view')
+            ? $pmDashboard->build()
+            : null;
         // Asset stats
         $assetStats = [
             'total'       => Asset::count(),
@@ -63,7 +68,7 @@ class DashboardController extends Controller
 
         return view('admin.dashboard.index', compact(
             'assetStats', 'byCategory', 'borrowingStats',
-            'recentBorrowings', 'overdueBorrowings', 'monthlyData'
+            'recentBorrowings', 'overdueBorrowings', 'monthlyData', 'pmSummary'
         ));
     }
 

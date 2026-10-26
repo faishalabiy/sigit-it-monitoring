@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'sso' => [
+        'base_url' => env('SSO_BASE_URL'),
+        'client_id' => env('SSO_CLIENT_ID'),
+        'client_secret' => env('SSO_CLIENT_SECRET'),
+        'callback_url' => env('SSO_CALLBACK_URL'),
+        'after_login_url' => env('SSO_AFTER_LOGIN_URL', '/'),
+        'logout_url' => env('SSO_LOGOUT_URL'),
+        'after_logout_url' => env('SSO_AFTER_LOGOUT_URL', '/login'),
+    ],
+
 ];

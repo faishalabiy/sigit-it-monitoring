@@ -1,0 +1,7 @@
+@extends('layouts.admin')
+@section('page-title','Pengguna')
+@section('content')
+<div class="mb-5 flex items-center justify-between"><h2 class="text-2xl font-bold">Pengelolaan Pengguna</h2><a class="rounded-lg bg-blue-600 px-4 py-2 text-white" href="{{ route('admin.users.create') }}">+ Tambah Pengguna</a></div>
+<form method="GET" class="mb-5"><input name="search" placeholder="Cari nama atau email" value="{{ request('search') }}" class="rounded-lg border-slate-300"><button class="rounded-lg bg-slate-800 px-4 py-2 text-white">Cari</button></form>
+<div class="overflow-x-auto rounded-xl bg-white"><table class="w-full text-left text-sm"><thead class="bg-slate-50"><tr><th class="p-4">Nama</th><th>Email</th><th>Role</th><th>Tindakan</th></tr></thead><tbody>@forelse($users as $user)<tr class="border-t"><td class="p-4">{{ $user->name }}</td><td>{{ $user->email }}</td><td>@forelse($user->roles as $role)<span class="mr-1 rounded bg-blue-50 p-1 text-blue-700">{{ $role->name }}</span>@empty<span class="text-amber-600">Tanpa role</span>@endforelse</td><td><a class="mr-3 text-blue-600" href="{{ route('admin.users.edit',$user) }}">Edit</a>@if(auth()->id()!==$user->id)<form class="inline" method="POST" action="{{ route('admin.users.destroy',$user) }}" onsubmit="return confirm('Hapus akun ini?')">@csrf @method('DELETE')<button class="text-red-600">Hapus</button></form>@endif</td></tr>@empty<tr><td colspan="4" class="p-5">Tidak ditemukan.</td></tr>@endforelse</tbody></table></div><div class="mt-4">{{ $users->links() }}</div>
+@endsection

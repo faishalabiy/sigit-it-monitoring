@@ -7,6 +7,8 @@ return [
     |--------------------------------------------------------------------------
     */
 
+    'admin_user_ids' => env('SIGIT_ADMIN_USER_IDS', ''),
+
     // Admin email for notifications
     'admin_email' => env('ADMIN_EMAIL', 'admin@example.com'),
 
